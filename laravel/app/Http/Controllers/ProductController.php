@@ -62,8 +62,25 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $unique_id)
     {
-        //
+        $product = ProductModel::where("unique_id", $unique_id)->first();
+
+        if(empty($product))
+        {
+            $a_returnResponse = [
+                "message" => "Product reported was not found."
+            ];
+
+            return response()->json($a_returnResponse, 404);
+        }
+
+        $product->delete();
+
+        $a_returnResponse = [
+            "message" => "Product has been removed successfully."
+        ];
+
+        return response()->json($a_returnResponse, 200);
     }
 }
