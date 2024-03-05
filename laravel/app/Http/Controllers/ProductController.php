@@ -54,9 +54,42 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $unique_id)
     {
-        //
+        $product = ProductModel::where("unique_id", $unique_id)->first();
+
+        if(empty($product))
+        {
+            $a_returnResponse = [
+                "message" => "Product reported was not found."
+            ];
+
+            return response()->json($a_returnResponse, 404);
+        }
+
+        if($request->has("name") && !empty(trim($request->get("name"))))
+        {
+            $product->name = trim($request->get("name"));
+        }
+
+        if($request->has("description") && !empty(trim($request->get("description"))))
+        {
+            $product->description = trim($request->get("description"));
+        }
+
+        if($request->has("image_url") && !empty(trim($request->get("image_url"))))
+        {
+            $product->image_url = trim($request->get("image_url"));
+        }
+
+        $product->save();
+
+        $a_returnResponse = [
+            "message" => "Product has been changed successfully.",
+            "product" => $product
+        ];
+
+        return response()->json($a_returnResponse, 200);
     }
 
     /**
